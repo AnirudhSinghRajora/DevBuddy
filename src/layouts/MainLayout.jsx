@@ -4,14 +4,14 @@ import { FiSun, FiMoon } from 'react-icons/fi';
 export default function MainLayout({ children }) {
   const [isDark, setIsDark] = useState(false);
 
-  // Check for dark mode on component mount
+  
   useEffect(() => {
-    // Check if user previously chose dark mode
+    
     const storedDarkMode = localStorage.getItem('darkMode') === 'true';
-    // Check if system prefers dark mode
+    
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // Apply dark mode if either stored preference exists or system prefers dark
+    
     const shouldBeDark = storedDarkMode !== null ? storedDarkMode : prefersDark;
     setIsDark(shouldBeDark);
     

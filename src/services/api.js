@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Create reusable axios instances for different APIs
 const githubAPI = axios.create({
   baseURL: 'https://api.github.com',
   headers: {
@@ -22,7 +21,6 @@ const weatherAPI = axios.create({
   }
 });
 
-// Spotify API configuration
 const SPOTIFY_CLIENT_ID = 'f12fab314b274b8a839a42c5a99fd53d';
 const SPOTIFY_REDIRECT_URI = `${window.location.origin}/callback`;
 const SPOTIFY_SCOPES = [
@@ -33,7 +31,6 @@ const SPOTIFY_SCOPES = [
   'playlist-read-private'
 ].join(' ');
 
-// GitHub API services
 export const githubService = {
   getUserProfile: async (username) => {
     try {
@@ -61,7 +58,6 @@ export const githubService = {
   },
 };
 
-// Codeforces API services
 export const codeforceService = {
   getUserProfile: async (handle) => {
     try {
@@ -76,7 +72,6 @@ export const codeforceService = {
   getContests: async () => {
     try {
       const response = await codeforceAPI.get('/contest.list');
-      // Filter to only get upcoming contests
       return response.data.result
         .filter(contest => contest.phase === 'BEFORE')
         .slice(0, 5);
@@ -87,7 +82,6 @@ export const codeforceService = {
   },
 };
 
-// Weather API services
 export const weatherService = {
   getWeatherByCity: async (city) => {
     try {
@@ -110,8 +104,6 @@ export const weatherService = {
       console.error('Error fetching weather data:', error);
       
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         if (error.response.status === 401) {
           throw new Error('Invalid API key. Please check your OpenWeather API key.');
         } else if (error.response.status === 404) {
@@ -122,17 +114,14 @@ export const weatherService = {
           throw new Error(`Weather API error: ${error.response.data.message || 'Unknown error'}`);
         }
       } else if (error.request) {
-        // The request was made but no response was received
         throw new Error('No response from weather service. Please check your internet connection.');
       } else {
-        // Something happened in setting up the request that triggered an Error
         throw new Error(`Error setting up weather request: ${error.message}`);
       }
     }
   },
 };
 
-// Spotify API services
 export const spotifyService = {
   async generateCodeChallenge(codeVerifier) {
     const encoder = new TextEncoder();
@@ -154,12 +143,9 @@ export const spotifyService = {
   },
 
   getAuthUrl: async () => {
-    // Generate random state
     const state = Math.random().toString(36).substring(7);
-    // Store state for verification
     localStorage.setItem('spotify_auth_state', state);
 
-    // Generate and store PKCE values
     const codeVerifier = spotifyService.generateCodeVerifier();
     localStorage.setItem('spotify_code_verifier', codeVerifier);
     const codeChallenge = await spotifyService.generateCodeChallenge(codeVerifier);
@@ -172,7 +158,7 @@ export const spotifyService = {
       state: state,
       code_challenge_method: 'S256',
       code_challenge: codeChallenge,
-      show_dialog: true // Always show the auth dialog
+      show_dialog: true 
     });
 
     return `https://accounts.spotify.com/authorize?${params.toString()}`;
@@ -190,7 +176,7 @@ export const spotifyService = {
       });
       
       if (response.status === 204) {
-        return null; // No track currently playing
+        return null;
       }
       
       return await response.json();
