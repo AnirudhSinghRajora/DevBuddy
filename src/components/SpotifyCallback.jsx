@@ -8,16 +8,13 @@ export default function SpotifyCallback() {
     const handleCallback = async () => {
       try {
         console.log('Full URL:', window.location.href);
-        
-        // Get URL parameters from search (not hash, since we're using code flow)
         const params = new URLSearchParams(window.location.search);
         console.log('Parsed params:', Object.fromEntries(params.entries()));
 
-        // Get stored state
+        // Verify state
         const storedState = localStorage.getItem('spotify_auth_state');
         const receivedState = params.get('state');
 
-        // Verify state
         if (!receivedState || receivedState !== storedState) {
           console.error('State mismatch. Possible CSRF attack.');
           navigate('/?error=state_mismatch');
@@ -42,7 +39,7 @@ export default function SpotifyCallback() {
           return;
         }
 
-        // Get the code verifier from storage
+        // Get code verifier
         const codeVerifier = localStorage.getItem('spotify_code_verifier');
         if (!codeVerifier) {
           console.error('No code verifier found');
@@ -50,7 +47,7 @@ export default function SpotifyCallback() {
           return;
         }
 
-        // Exchange the code for tokens
+        // Exchange code for tokens
         const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
           method: 'POST',
           headers: {
@@ -74,7 +71,7 @@ export default function SpotifyCallback() {
 
         const tokenData = await tokenResponse.json();
 
-        // Store the tokens
+        // Store tokens
         localStorage.setItem('spotify_access_token', tokenData.access_token);
         localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
         const expirationTime = Date.now() + (tokenData.expires_in * 1000);

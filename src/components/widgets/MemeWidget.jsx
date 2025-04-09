@@ -16,19 +16,19 @@ export default function MemeWidget({ className }) {
     setDisliked(false);
 
     try {
-      const response = await fetch('https://meme-api.com/gimme/ProgrammerHumor');
+      const response = await fetch('https:
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
 
-      // Check if the response contains a valid meme URL
+      
       if (!data || !data.url) {
          throw new Error('Invalid response from meme API');
       }
 
       setMeme({
-        id: data.postLink, // Use postLink or another unique identifier if available
+        id: data.postLink, 
         title: data.title,
         url: data.url,
         source: `r/${data.subreddit}`,
@@ -48,20 +48,20 @@ export default function MemeWidget({ className }) {
   const handleLike = () => {
     setLiked(!liked);
     setDisliked(false);
-    // In a real app, you might send this interaction data to a backend
+    
   };
 
   const handleDislike = () => {
     setDisliked(!disliked);
     setLiked(false);
-    // In a real app, you might send this interaction data to a backend
+    
   };
 
   return (
     <Widget
       title="Dev Humor"
       icon={<FiSmile />}
-      onRefresh={fetchData} // Use fetchData directly for refresh
+      onRefresh={fetchData} 
       isLoading={isLoading}
       className={className}
     >
@@ -88,10 +88,10 @@ export default function MemeWidget({ className }) {
               alt={meme.title}
               className="max-w-full max-h-80 object-contain"
               onError={(e) => {
-                 // Handle image loading errors, maybe show a placeholder
+                 
                  console.error('Error loading meme image:', meme.url);
                  setError('Failed to load meme image.');
-                 e.target.style.display = 'none'; // Hide broken image icon
+                 e.target.style.display = 'none'; 
               }}
             />
           </div>

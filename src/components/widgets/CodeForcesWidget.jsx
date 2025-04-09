@@ -18,12 +18,12 @@ export default function CodeForcesWidget({ className }) {
     setError(null);
     
     try {
-      // Fetch user data
+      
       const user = await codeforceService.getUserProfile(userHandle);
       setUserData(user);
       setHandle(userHandle);
       
-      // Fetch contests data
+      
       const contestsList = await codeforceService.getContests();
       setContests(contestsList);
       
@@ -47,7 +47,7 @@ export default function CodeForcesWidget({ className }) {
     }
   };
 
-  // Format rating color based on Codeforces rating system
+  
   const getRatingColor = (rating) => {
     if (!rating) return 'text-gray-500 dark:text-gray-400';
     if (rating < 1200) return 'text-gray-500 dark:text-gray-400';
@@ -144,7 +144,7 @@ export default function CodeForcesWidget({ className }) {
             )}
           </div>
 
-          {/* Recent Performance Section */}
+
           <div className="mt-4">
             <h4 className="font-medium mb-2">Recent Performance</h4>
             <div className="grid grid-cols-3 gap-2">
