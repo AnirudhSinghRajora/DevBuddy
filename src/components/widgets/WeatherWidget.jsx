@@ -7,14 +7,14 @@ export default function WeatherWidget({ className }) {
   const [isLoading, setIsLoading] = useState(true);
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState(null);
-  const [location, setLocation] = useState('San Francisco');
+  const [location, setLocation] = useState('Lucknow');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async (city = 'San Francisco') => {
+  const fetchData = async (city = 'Lucknow') => {
     if (!city) return;
     
     setIsLoading(true);
