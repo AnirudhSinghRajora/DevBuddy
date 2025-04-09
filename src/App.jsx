@@ -1,13 +1,20 @@
-import MainLayout from './layouts/MainLayout'
-import Dashboard from './components/dashboard/Dashboard'
-import './app.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './app.css';
+import MainLayout from './layouts/MainLayout';
+import Dashboard from './components/dashboard/Dashboard';
+import SpotifyCallback from './components/SpotifyCallback';
 
-function App() {
+export default function App() {
   return (
-    <MainLayout>
-      <Dashboard />
-    </MainLayout>
-  )
+    <Router>
+      <Routes>
+        <Route path="/callback" element={<SpotifyCallback />} />
+        <Route path="/" element={
+          <MainLayout>
+            <Dashboard />
+          </MainLayout>
+        } />
+      </Routes>
+    </Router>
+  );
 }
-
-export default App
