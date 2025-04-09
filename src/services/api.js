@@ -134,18 +134,44 @@ export const weatherService = {
 
 // Spotify API services
 export const spotifyService = {
-  getAuthUrl: () => {
+  async generateCodeChallenge(codeVerifier) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(codeVerifier);
+    const digest = await window.crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+  },
+
+  generateCodeVerifier() {
+    const array = new Uint8Array(32);
+    window.crypto.getRandomValues(array);
+    return btoa(String.fromCharCode(...array))
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+  },
+
+  getAuthUrl: async () => {
     // Generate random state
     const state = Math.random().toString(36).substring(7);
     // Store state for verification
     localStorage.setItem('spotify_auth_state', state);
 
+    // Generate and store PKCE values
+    const codeVerifier = spotifyService.generateCodeVerifier();
+    localStorage.setItem('spotify_code_verifier', codeVerifier);
+    const codeChallenge = await spotifyService.generateCodeChallenge(codeVerifier);
+
     const params = new URLSearchParams({
       client_id: SPOTIFY_CLIENT_ID,
-      response_type: 'token',
+      response_type: 'code',
       redirect_uri: SPOTIFY_REDIRECT_URI,
       scope: SPOTIFY_SCOPES,
       state: state,
+      code_challenge_method: 'S256',
+      code_challenge: codeChallenge,
       show_dialog: true // Always show the auth dialog
     });
 

@@ -5,14 +5,12 @@ export default function SpotifyCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleCallback = () => {
+    const handleCallback = async () => {
       try {
         console.log('Full URL:', window.location.href);
-        console.log('Hash:', window.location.hash);
-
-        // Get the hash without the leading #
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
+        
+        // Get URL parameters from search (not hash, since we're using code flow)
+        const params = new URLSearchParams(window.location.search);
         console.log('Parsed params:', Object.fromEntries(params.entries()));
 
         // Get stored state
@@ -29,7 +27,7 @@ export default function SpotifyCallback() {
         // Clear stored state
         localStorage.removeItem('spotify_auth_state');
 
-        const accessToken = params.get('access_token');
+        const code = params.get('code');
         const error = params.get('error');
 
         if (error) {
@@ -38,17 +36,52 @@ export default function SpotifyCallback() {
           return;
         }
 
-        if (!accessToken) {
-          console.error('No access token received from Spotify');
-          navigate('/?error=no_token');
+        if (!code) {
+          console.error('No authorization code received from Spotify');
+          navigate('/?error=no_code');
           return;
         }
 
-        // Store the access token
-        const expiresIn = params.get('expires_in');
-        const expirationTime = Date.now() + (parseInt(expiresIn) * 1000);
-        localStorage.setItem('spotify_access_token', accessToken);
+        // Get the code verifier from storage
+        const codeVerifier = localStorage.getItem('spotify_code_verifier');
+        if (!codeVerifier) {
+          console.error('No code verifier found');
+          navigate('/?error=no_code_verifier');
+          return;
+        }
+
+        // Exchange the code for tokens
+        const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            client_id: 'f12fab314b274b8a839a42c5a99fd53d',
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: `${window.location.origin}/callback`,
+            code_verifier: codeVerifier,
+          }),
+        });
+
+        if (!tokenResponse.ok) {
+          const errorData = await tokenResponse.json();
+          console.error('Token exchange failed:', errorData);
+          navigate('/?error=token_exchange_failed');
+          return;
+        }
+
+        const tokenData = await tokenResponse.json();
+
+        // Store the tokens
+        localStorage.setItem('spotify_access_token', tokenData.access_token);
+        localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
+        const expirationTime = Date.now() + (tokenData.expires_in * 1000);
         localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+
+        // Clean up PKCE values
+        localStorage.removeItem('spotify_code_verifier');
 
         // Navigate back to home
         navigate('/');
