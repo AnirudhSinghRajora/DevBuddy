@@ -32,6 +32,3 @@ A personalized dashboard web app that centralizes tools, insights, and entertain
 
 This project is currently in development with mock data. API integrations will be added progressively.
 
-## License
-
-MIT
