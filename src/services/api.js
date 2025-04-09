@@ -24,7 +24,6 @@ const weatherAPI = axios.create({
 
 // Spotify API configuration
 const SPOTIFY_CLIENT_ID = 'f12fab314b274b8a839a42c5a99fd53d';
-// Use the current origin (will work with both local and ngrok URLs)
 const SPOTIFY_REDIRECT_URI = `${window.location.origin}/callback`;
 const SPOTIFY_SCOPES = [
   'user-read-playback-state',
@@ -136,7 +135,21 @@ export const weatherService = {
 // Spotify API services
 export const spotifyService = {
   getAuthUrl: () => {
-    return `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(SPOTIFY_REDIRECT_URI)}&scope=${encodeURIComponent(SPOTIFY_SCOPES)}`;
+    // Generate random state
+    const state = Math.random().toString(36).substring(7);
+    // Store state for verification
+    localStorage.setItem('spotify_auth_state', state);
+
+    const params = new URLSearchParams({
+      client_id: SPOTIFY_CLIENT_ID,
+      response_type: 'token',
+      redirect_uri: SPOTIFY_REDIRECT_URI,
+      scope: SPOTIFY_SCOPES,
+      state: state,
+      show_dialog: true // Always show the auth dialog
+    });
+
+    return `https://accounts.spotify.com/authorize?${params.toString()}`;
   },
 
   getCurrentTrack: async () => {
