@@ -16,13 +16,13 @@ export default function MemeWidget({ className }) {
     setDisliked(false);
 
     try {
-      const response = await fetch('https:
+      const response = await fetch('https://meme-api.com/gimme/ProgrammerHumor');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
 
-      
+      // Check if the response contains a valid meme URL
       if (!data || !data.url) {
          throw new Error('Invalid response from meme API');
       }
@@ -48,13 +48,11 @@ export default function MemeWidget({ className }) {
   const handleLike = () => {
     setLiked(!liked);
     setDisliked(false);
-    
   };
 
   const handleDislike = () => {
     setDisliked(!disliked);
     setLiked(false);
-    
   };
 
   return (
@@ -88,7 +86,6 @@ export default function MemeWidget({ className }) {
               alt={meme.title}
               className="max-w-full max-h-80 object-contain"
               onError={(e) => {
-                 
                  console.error('Error loading meme image:', meme.url);
                  setError('Failed to load meme image.');
                  e.target.style.display = 'none'; 

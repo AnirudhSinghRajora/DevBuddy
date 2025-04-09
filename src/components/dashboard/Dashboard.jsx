@@ -3,7 +3,7 @@ import { FiCode, FiGithub, FiCloud, FiMusic, FiSmile } from 'react-icons/fi';
 import CodeForcesWidget from '../widgets/CodeForcesWidget';
 import GitHubWidget from '../widgets/GitHubWidget';
 import WeatherWidget from '../widgets/WeatherWidget';
-import MusicWidget from '../widgets/MusicWidget';
+import SpotifyWidget from '../widgets/SpotifyWidget';
 import MemeWidget from '../widgets/MemeWidget';
 
 export default function Dashboard() {
@@ -14,7 +14,7 @@ export default function Dashboard() {
     { id: 'competitive', label: 'Competitive Coding', icon: <FiCode /> },
     { id: 'github', label: 'GitHub', icon: <FiGithub /> },
     { id: 'weather', label: 'Weather', icon: <FiCloud /> },
-    { id: 'music', label: 'Music', icon: <FiMusic /> },
+    { id: 'spotify', label: 'Spotify', icon: <FiMusic /> },
     { id: 'memes', label: 'Memes', icon: <FiSmile /> },
   ];
 
@@ -24,7 +24,7 @@ export default function Dashboard() {
       case 'competitive': return <CodeForcesWidget />;
       case 'github': return <GitHubWidget />;
       case 'weather': return <WeatherWidget />;
-      case 'music': return <MusicWidget />;
+      case 'spotify': return <SpotifyWidget />;
       case 'memes': return <MemeWidget />;
       default: return null;
     }
@@ -77,7 +77,7 @@ export default function Dashboard() {
           </div>
           <div className="col-span-1 md:col-span-2 flex">
             <div className="w-full">
-              <MusicWidget />
+              <SpotifyWidget />
             </div>
           </div>
         </div>

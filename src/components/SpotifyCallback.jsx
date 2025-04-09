@@ -11,7 +11,6 @@ export default function SpotifyCallback() {
         const params = new URLSearchParams(window.location.search);
         console.log('Parsed params:', Object.fromEntries(params.entries()));
 
-        // Verify state
         const storedState = localStorage.getItem('spotify_auth_state');
         const receivedState = params.get('state');
 
@@ -21,7 +20,6 @@ export default function SpotifyCallback() {
           return;
         }
 
-        // Clear stored state
         localStorage.removeItem('spotify_auth_state');
 
         const code = params.get('code');
@@ -39,7 +37,6 @@ export default function SpotifyCallback() {
           return;
         }
 
-        // Get code verifier
         const codeVerifier = localStorage.getItem('spotify_code_verifier');
         if (!codeVerifier) {
           console.error('No code verifier found');
@@ -47,7 +44,6 @@ export default function SpotifyCallback() {
           return;
         }
 
-        // Exchange code for tokens
         const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
           method: 'POST',
           headers: {
@@ -71,16 +67,13 @@ export default function SpotifyCallback() {
 
         const tokenData = await tokenResponse.json();
 
-        // Store tokens
         localStorage.setItem('spotify_access_token', tokenData.access_token);
         localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
         const expirationTime = Date.now() + (tokenData.expires_in * 1000);
         localStorage.setItem('spotify_token_expiration', expirationTime.toString());
 
-        // Clean up PKCE values
         localStorage.removeItem('spotify_code_verifier');
 
-        // Navigate back to home
         navigate('/');
       } catch (error) {
         console.error('Error processing Spotify callback:', error);
